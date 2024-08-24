@@ -1,6 +1,6 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 const props = defineProps<{
-    date: Date
+    date: string
 }>();
 
 const formattedDate = new Date(props.date).toLocaleDateString('nl-NL', {
@@ -22,8 +22,8 @@ const isCurrentDay = () => {
 </script>
 
 <template>
-    <div class="p-2 text-white bg-neutral-600 text-center" :class="{'!bg-green-700':isCurrentDay()}">
-        {{formattedOutput}}
+    <div :class="{'!bg-green-700':isCurrentDay()}" class="p-2 text-white bg-neutral-600 text-center">
+        {{ formattedOutput }}
     </div>
 </template>
 

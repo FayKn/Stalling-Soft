@@ -3,6 +3,8 @@ definePageMeta({
     layout: 'dashboard'
 })
 
+const selectedEvent = ref<number>(0);
+
 const calendarData = [
     {
         id: 1,
@@ -45,6 +47,25 @@ function formatHour(hour: number): string {
 function createEvent(hour: number, date: string) {
     console.log('Create event for ', date, ' at ', hour);
 }
+
+// register the event listener for the click event to check if the click was outside the selected event by the ref openEvent
+onMounted(() => {
+    document.addEventListener('click', (event) => {
+        if (selectedEvent.value) {
+            const selectedEventElement =  document.getElementById(selectedEvent.value.toString());
+            if (selectedEventElement && !selectedEventElement.contains(event.target as Node)) {
+                selectedEvent.value = 0;
+            }
+        }
+    });
+});
+
+// remove the event listener when the component is destroyed
+onBeforeUnmount(() => {
+    document.removeEventListener('click', () => {
+        console.log('Event listener removed');
+    });
+});
 </script>
 
 <template>
@@ -64,8 +85,12 @@ function createEvent(hour: number, date: string) {
                     </div>
                     <!-- Calendar Rows -->
                     <template v-for="(date, count) in calendarData" :key="date.id">
-                        <CalendarRow :class="{'border-l border-white': count !== 0  }" :date="date.date"
-                                     :data="date.data" @createEvent="createEvent"/>
+                        <CalendarRow :class="{'border-l border-white': count !== 0  }"
+                                     :selectedEvent="selectedEvent"
+                                     :date="date.date"
+                                     :data="date.data?? []"
+                                     @createEvent="createEvent"
+                                    @setSelectedEvent="(id) => selectedEvent = id"/>
                     </template>
                 </div>
             </div>
